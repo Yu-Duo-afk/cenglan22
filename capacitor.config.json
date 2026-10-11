@@ -1,0 +1,6 @@
+{
+  "appId": "com.chenglan.ai",
+  "appName": "澄蓝",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}
