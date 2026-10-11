@@ -1,51 +1,52 @@
-名称: 构建Android APK
+name: Build Android APK
 
-在……上:
-推动:
-分支: [main]
-工作流调度:
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
 
-权限:
-目录: 阅读
+permissions:
+  contents: read
 
-工作:
-构建:
-句子过长: ubuntu-latest
-步骤:
-      - 名称: 检出仓库
-用途: aactions/checkout@v4
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - 名称: 安装Node.js
-用途: actions/setup-node@v4
-与……一起:
-          节点版本: 20
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-      - 名称: 安装Java
-用途: actions/setup-java@v4
-与……一起:
-分配: 铁木真
-          Java版本: '17'
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
 
-      - 名称: 安装依赖项
-运行: npm安装
+      - name: Install dependencies
+        run: npm install
 
-      - 名称: 构建网页应用
-运行: npm run build
+      - name: Build web app
+        run: npm run build
 
-      - 名称: 创建Android项目
-运行: npx cap add android
+      - name: Create Android project
+        run: npx cap add android
 
-      - 名称: 同步网页应用
-运行: npx cap sync 安卓版
+      - name: Sync web app
+        run: npx cap sync android
 
-      - 名称: 构建APK
-工作目录: 安卓
-运行: chmod +x gradlew &&./gradlew assembleDebug
+      - name: Build APK
+        working-directory: android
+        run: chmod +x gradlew && ./gradlew assembleDebug
 
-      - 名称: 上传APK
-用途: actions/upload-artifact@v4
-与……一起:
-名称: chenglan-debug-apk
-路径: android/app/build/outputs/apk/debug/app-debug.apk
-如果未找到文件: 错误
-          保留天数: 14
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: chenglan-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
