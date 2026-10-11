@@ -1,0 +1,51 @@
+名称: 构建Android APK
+
+在……上:
+推动:
+分支: [main]
+工作流调度:
+
+权限:
+目录: 阅读
+
+工作:
+构建:
+句子过长: ubuntu-latest
+步骤:
+      - 名称: 检出仓库
+用途: aactions/checkout@v4
+
+      - 名称: 安装Node.js
+用途: actions/setup-node@v4
+与……一起:
+          节点版本: 20
+
+      - 名称: 安装Java
+用途: actions/setup-java@v4
+与……一起:
+分配: 铁木真
+          Java版本: '17'
+
+      - 名称: 安装依赖项
+运行: npm安装
+
+      - 名称: 构建网页应用
+运行: npm run build
+
+      - 名称: 创建Android项目
+运行: npx cap add android
+
+      - 名称: 同步网页应用
+运行: npx cap sync 安卓版
+
+      - 名称: 构建APK
+工作目录: 安卓
+运行: chmod +x gradlew &&./gradlew assembleDebug
+
+      - 名称: 上传APK
+用途: actions/upload-artifact@v4
+与……一起:
+名称: chenglan-debug-apk
+路径: android/app/build/outputs/apk/debug/app-debug.apk
+如果未找到文件: 错误
+          保留天数: 14
