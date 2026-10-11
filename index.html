@@ -65,7 +65,31 @@ const pages=['chat','music','tools','memory','me','settings'];let activePage='ch
 function go(p){if(!pages.includes(p))return;activePage=p;document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id==='page-'+p));document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===p));document.getElementById('composer').style.display=p==='chat'?'flex':'none';document.querySelector('.content').scrollTop=0;hideMenu()}
 document.querySelectorAll('[data-page]').forEach(x=>x.addEventListener('click',()=>go(x.dataset.page)));
 function toast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.add('show');clearTimeout(window._toastTimer);window._toastTimer=setTimeout(()=>e.classList.remove('show'),2300)}
- function openVoiceCall(){toast('澄蓝语音通话界面正在准备中，请稍候。')}
+ 
+function openVoiceCall(){
+  if(document.getElementById('voiceCallPanel'))return;
+  const panel=document.createElement('div');
+  panel.id='voiceCallPanel';
+  panel.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(12,20,38,.96);color:white;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:sans-serif;padding:24px;box-sizing:border-box;text-align:center';
+  panel.innerHTML=`
+    <div style="font-size:64px;margin-bottom:20px">🌙</div>
+    <h2 style="margin:8px">澄蓝语音</h2>
+    <p id="voiceCallStatus" style="color:#b9c8df">通话界面已打开</p>
+    <div style="margin:30px;display:flex;gap:24px">
+      <button id="voiceMuteBtn" style="border:0;border-radius:18px;padding:16px;background:#34445f;color:white;font-size:16px">🎙️ 静音</button>
+      <button id="voiceHangupBtn" style="border:0;border-radius:18px;padding:16px;background:#e5485d;color:white;font-size:16px">📴 挂断</button>
+    </div>
+    <p style="font-size:13px;color:#9eacc4">当前为界面原型，尚未连接真实通话</p>`;
+  document.body.appendChild(panel);
+  let muted=false;
+  document.getElementById('voiceMuteBtn').onclick=()=>{
+    muted=!muted;
+    document.getElementById('voiceMuteBtn').textContent=muted?'🔇 取消静音':'🎙️ 静音';
+    document.getElementById('voiceCallStatus').textContent=muted?'麦克风静音状态（界面演示）':'通话界面已打开';
+  };
+  document.getElementById('voiceHangupBtn').onclick=()=>panel.remove();
+}
+
 function addMessage(text,isUser=true){
  const log=document.getElementById('chatlog'),m=document.createElement('div');m.className='msg'+(isUser?' user':'');
  const savedAvatar=localStorage.getItem(isUser?'chenglan_user_avatar':'chenglan_avatar');
